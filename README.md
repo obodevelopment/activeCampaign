@@ -38,7 +38,7 @@ response = {'subscriber_id': XXX, 'sendlast_should': 0, 'sendlast_did': 0, 'resu
 ***  
 
 ### Update Contact:  
-activeCampaign.update_contact("contact_id", FirstNAme="Johns")  
+activeCampaign.update_contact("contact_id", FirstName="Johns")  
   This is set to not overwrite all list fields by default.  
 
 ### Delete Contact:  
