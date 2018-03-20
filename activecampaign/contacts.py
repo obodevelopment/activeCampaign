@@ -157,6 +157,18 @@ class activeCampaign(object):
         request = ac_api_request(querystring, payload, activeCampaign.base_url)
         return json.loads(request.text)
 
+    def remove_contact_tag(contact_email, tag):
+        querystring = {"api_key":  activeCampaign.api_key,
+                       "api_action": "contact_tag_remove",
+                       "api_output": "json",
+                       }
+
+        payload = {"email": "{}".format(contact_email),
+                   "tags": "{}".format(tag)
+                   }
+        request = ac_api_request(querystring, payload, activeCampaign.base_url)
+        return json.loads(request.text)
+
     def get_all_campaign_details():
         querystring = {"api_key":  activeCampaign.api_key,
                        "api_action": "campaign_list",
