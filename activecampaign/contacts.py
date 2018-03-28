@@ -58,7 +58,7 @@ class activeCampaign(object):
         return json.loads(request.text)
 
     def update_contact(contact_id, **kwargs):
-        querystring = {"api_key":  ActiveCampaign.api_key,
+        querystring = {"api_key":  activeCampaign.api_key,
                        "api_action": "contact_edit",
                        "api_output": "json",
                         }
@@ -69,7 +69,7 @@ class activeCampaign(object):
 
         for key in kwargs:
             payload['{}'.format(key)] = "{}".format(kwargs[key])
-        request = ac_api_request(querystring, payload, ActiveCampaign.base_url)
+        request = ac_api_request(querystring, payload, activeCampaign.base_url)
         return json.loads(request.text)
 
     def delete_contact(contact_id):
