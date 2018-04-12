@@ -13,11 +13,10 @@ def ac_api_request(querystring, payload, v2url):
     }
 
     response = requests.request("POST", url, data=payload, headers=headers, params=querystring)
-    #print(response)
     return response
 
 ############################  V2 API  #################################################
-class activeCampaign(object):
+class deals(object):
     def __init__(self, key=None, url=None):
         self.api_key = key
         self.base_url = url
@@ -34,7 +33,7 @@ class activeCampaign(object):
         organization  Name of the organization of the contact for the new deal. Example: 'Acme Corp'
     '''
     def add_deal(title, value, currency, pipeline, contactid, **kwargs):
-        querystring = {"api_key": activeCampaign.api_key,
+        querystring = {"api_key": deals.api_key,
                        "api_action": "deal_add",
                        "api_output": "json",
                        "email": "{}".format(email)}
@@ -46,5 +45,5 @@ class activeCampaign(object):
                 }
         for key in kwargs:
             payload['{}'.format(key)] = "{}".format(kwargs[key])
-        request = ac_api_request(querystring, payload, activeCampaign.base_url)
+        request = ac_api_request(querystring, payload, deals.base_url)
         return json.loads(request.text)
