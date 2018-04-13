@@ -15,7 +15,7 @@ class Deals(object):
         organization  Name of the organization of the contact for the new deal. Example: 'Acme Corp'
     '''
 
-    def add_deal(self, title, value, pipeline, contact_id):
+    def add(self, title, value, pipeline, contact_id):
         data = {
             'title': title,
             'value': value,
@@ -32,7 +32,7 @@ class Deals(object):
         owner   ID of the owner of the new deal note. Example: '4' (Get available owner IDs with "user_list" call)
     '''
 
-    def add_deal_note(self, note, deal_id):
+    def add_note(self, note, deal_id):
         data = {
             'note': note,
             'dealid': deal_id,
