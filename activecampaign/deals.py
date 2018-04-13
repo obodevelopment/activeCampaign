@@ -6,7 +6,6 @@ def ac_api_request(querystring, payload, v2url):
     payload = payload
     base_url = v2url
     url = base_url + "/admin/api.php?"
-    print(url)
     headers = {
         'cache-control': "no-cache",
         'content-type': "application/x-www-form-urlencoded"
@@ -32,18 +31,41 @@ class deals(object):
         contact_name  Name of the contact for the new deal. Example: 'John Doe'
         organization  Name of the organization of the contact for the new deal. Example: 'Acme Corp'
     '''
-    def add_deal(title, value, currency, pipeline, contactid, **kwargs):
+    def add_deal(title, value, pipeline, contactid, **kwargs):
         querystring = {"api_key": deals.api_key,
                        "api_action": "deal_add",
-                       "api_output": "json",
-                       "email": "{}".format(email)}
+                       "api_output": "json"
+                    }
         payload = {"title": title,
                     "value": value,
-                    "currency": currency,
+                    "currency": 'usd',
                     "pipeline": pipeline,
-                    "contactid": id
+                    "contactid": contactid
                 }
         for key in kwargs:
             payload['{}'.format(key)] = "{}".format(kwargs[key])
         request = ac_api_request(querystring, payload, deals.base_url)
+
+        return json.loads(request.text)
+
+
+    '''
+        Available Fields to add a note to a deal
+        note*   Text of the note. Example: 'Follow up about this deal soon'
+        dealid* ID of the deal for the new deal note. Example: '31' (Get available deal IDs with "deal_list" call)
+        owner   ID of the owner of the new deal note. Example: '4' (Get available owner IDs with "user_list" call)
+    '''
+
+    def add_deal_note(note, dealid, **kwargs):
+        querystring = {"api_key": deals.api_key,
+                       "api_action": "deal_note_add",
+                       "api_output": "json"
+                    }
+        payload = { "note": note,
+                    "dealid": dealid,
+                }
+        for key in kwargs:
+            payload['{}'.format(key)] = "{}".format(kwargs[key])
+        request = ac_api_request(querystring, payload, deals.base_url)
+
         return json.loads(request.text)
