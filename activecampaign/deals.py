@@ -16,14 +16,14 @@ class Deals(object):
     '''
 
     def add(self, title, value, pipeline, contact_id):
-        data = {
-            'title': title,
-            'value': value,
-            'currency': 'usd',
-            'pipeline': pipeline,
-            'contactid': contact_id
-        }
-        return self.client._post('deal_add', data)
+        additional_data = [
+            ('title', title),
+            ('value', value),
+            ('currency', 'usd'),
+            ('pipeline', pipeline),
+            ('contactid', contact_id),
+        ]
+        return self.client._post('deal_add', additional_data)
 
     '''
         Available Fields to add a note to a deal
@@ -33,8 +33,8 @@ class Deals(object):
     '''
 
     def add_note(self, note, deal_id):
-        data = {
-            'note': note,
-            'dealid': deal_id,
-        }
-        return self.client._post('deal_add', data)
+        additional_data = [
+            ('note', note),
+            ('dealid', deal_id),
+        ]
+        return self.client._post('deal_note_add', additional_data)

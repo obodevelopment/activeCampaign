@@ -28,19 +28,16 @@ class Contacts(object):
         return self.client._post("contact_add", data)
 
     def edit(self, data):
-        return self.client._post("contact_edit", data)
+        additional_data = [('overwrite', 0),]
+        return self.client._post("contact_edit", data, additional_data)
 
     def delete(self, id):
-        data = {
-            'id', id
-        }
-        return self.client._get('contact_delete', data)
+        additional_data = [('id', id),]
+        return self.client._get('contact_delete', additional_data)
 
     def lookup_by_email(self, email):
-        data = {
-            'email': email,
-        }
-        return self.client._get('contact_view_email', data)
+        additional_data = [('email', email),]
+        return self.client._get('contact_view_email', additional_data)
 
     def add_note(self, list_id, email, note):
         try:
@@ -50,43 +47,23 @@ class Contacts(object):
             print("Error Finding Contact in Active Campaign")
             return "Error Finding Contact in Active Campaign"
 
-        data = {
-            'id': contact_id,
-            'listid': list_id,
-            'note': note,
-        }
-        return self.client._post('contact_note_add', data)
-
-    def get_automation(self, email):
-        data = {
-            'contact_email': email,
-        }
-        return self.client._get('contact_automation_list', data)
-
-    def add_to_automation(self, email, automation_number):
-        data = {
-            'contact_email': email,
-            'automation': automation_number
-        }
-        return self.client._post('automation_contact_add', data)
-
-    def remove_from_automation(self, email, automation_number):
-        data = {
-            'contact_email': email,
-            'automation': automation_number
-        }
-        return self.client._post('automation_contact_remove', data)
+        additional_data = [
+            ('id', contact_id),
+            ('listid', list_id),
+            ('note', note),
+        ]
+        return self.client._post('contact_note_add', additional_data)
 
     def add_tag(self, email, tags):
-        data = {
-            'email': email,
-            'tags': tags,
-        }
-        return self.client._post('contact_tag_add', data)
+        aditional_data = [
+            ('email', email),
+            ('tags', tags),
+        ]
+        return self.client._post('contact_tag_add', aditional_data)
 
     def remove_tag(self, email, tags):
-        data = {
-            'email': email,
-            'tags': tags,
-        }
-        return self.client._post('contact_tag_remove', data)
+        aditional_data = [
+            ('email', email),
+            ('tags', tags),
+        ]
+        return self.client._post('contact_tag_remove', aditional_data)
