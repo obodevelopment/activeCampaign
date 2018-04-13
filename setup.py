@@ -1,16 +1,15 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
-
-setup(name='ActiveCampaign',
-    version='0.1',
-    description='ActiveCampaign',
-    packages=['activecampaign'],
+setup(name='activecampaign',
+    version='1.0',
+    description='ActiveCampaign API Library',
+    packages=find_packages(exclude=['test_activecampaign']),
     install_requires=[
         'pytest',
         'requests',
         'simplejson'
     ],
-    keywords='activeCampaign',
+    keywords='activecampaign',
     zip_safe=False,
     license='GPL',
 )

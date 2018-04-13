@@ -1,24 +1,7 @@
-import requests
-import simplejson as json
+class Contacts(object):
 
-def ac_api_request(querystring, payload, v2url):
-    querystring = querystring
-    payload = payload
-    base_url = v2url
-    url = base_url + "/admin/api.php?"
-    headers = {
-        'cache-control': "no-cache",
-        'content-type': "application/x-www-form-urlencoded"
-    }
-
-    response = requests.request("POST", url, data=payload, headers=headers, params=querystring)
-    return response
-
-############################  V2 API  #################################################
-class contacts(object):
-    def __init__(self, key=None, url=None):
-        self.api_key = key
-        self.base_url = url
+    def __init__(self, client):
+        self.client = client
 
     '''
         Available Fields to Create a Contact
@@ -39,132 +22,71 @@ class contacts(object):
         lastmessage[123]  Whether or not to set "send the last broadcast campaign." Examples: 1 = yes, 0 = no.
     '''
 
-    def add_contact(email, **kwargs):
-        querystring = {"api_key": contacts.api_key,
-                       "api_action": "contact_add",
-                       "api_output": "json",
-                       "email": "{}".format(email)}
-        payload = {"email": email ,}
-        for key in kwargs:
-            payload['{}'.format(key)] = "{}".format(kwargs[key])
-        request = ac_api_request(querystring, payload, contacts.base_url)
-        return json.loads(request.text)
+    def add(self, data):
+        if 'email' not in data:
+            raise KeyError('The contact must have an email')
+        return self.client._post("contact_add", data)
 
-    def update_contact(contact_id, **kwargs):
-        querystring = {"api_key":  contacts.api_key,
-                       "api_action": "contact_edit",
-                       "api_output": "json",
-                        }
+    def edit(self, data):
+        return self.client._post("contact_edit", data)
 
-        payload = {"id": contact_id,
-                   "overwrite": 0,
-                   }
+    def delete(self, id):
+        data = {
+            'id', id
+        }
+        return self.client._get('contact_delete', data)
 
-        for key in kwargs:
-            payload['{}'.format(key)] = "{}".format(kwargs[key])
-        request = ac_api_request(querystring, payload, contacts.base_url)
-        return json.loads(request.text)
+    def lookup_by_email(self, email):
+        data = {
+            'email': email,
+        }
+        return self.client._get('contact_view_email', data)
 
-    def delete_contact(contact_id):
-        querystring = {"api_key":  contacts.api_key,
-                       "api_action": "contact_delete",
-                       "api_output": "json",
-                       }
-
-        payload = {"id": contact_id,
-                   }
-
-        request = ac_api_request(querystring, payload, contacts.base_url)
-        return json.loads(request.text)
-
-    def lookup_contact_by_email(email):
-        querystring = {"api_key": contacts.api_key,
-                       "api_action": "contact_view_email",
-                       "api_output": "json",
-                       "email": "{}".format(email)}
-        request = ac_api_request(querystring, None, contacts.base_url)
-        return json.loads(request.text)
-
-    def add_contact_note(user_email, contact_email, note):
+    def add_note(self, list_id, email, note):
         try:
-            contact = lookup_contact_by_email(contact_email)
+            contact = lookup_by_email(email)
             contact_id = contact['id']
         except:
             print("Error Finding Contact in Active Campaign")
             return "Error Finding Contact in Active Campaign"
 
-        querystring = {"api_key":  contacts.api_key,
-                       "api_action": "contact_note_add",
-                       "api_output": "json",
-                       "email": "{}".format(user_email)}
+        data = {
+            'id': contact_id,
+            'listid': list_id,
+            'note': note,
+        }
+        return self.client._post('contact_note_add', data)
 
-        payload = {"email": "test@outboundops.com",
-                   "id": "{}".format(contact_id),
-                   "listid": "0",
-                   "note": "{}".format(note)
-                   }
-        request = ac_api_request(querystring, payload, contacts.base_url)
-        return json.loads(request.text)
+    def get_automation(self, email):
+        data = {
+            'contact_email': email,
+        }
+        return self.client._get('contact_automation_list', data)
 
-    def get_contact_automation(email):
-        querystring = {"api_key":  contacts.api_key,
-                       "api_action": "contact_automation_list",
-                       "api_output": "json",
-                       "contact_email": "{}".format(email)}
-        request = ac_api_request(querystring, None, contacts.base_url)
-        return json.loads(request.text)
+    def add_to_automation(self, email, automation_number):
+        data = {
+            'contact_email': email,
+            'automation': automation_number
+        }
+        return self.client._post('automation_contact_add', data)
 
-    def add_contact_to_automation(email, automation_number):
-        querystring = {"api_key":  contacts.api_key,
-                       "api_action": "automation_contact_add",
-                       "api_output": "json",
-                       }
+    def remove_from_automation(self, email, automation_number):
+        data = {
+            'contact_email': email,
+            'automation': automation_number
+        }
+        return self.client._post('automation_contact_remove', data)
 
-        payload = {"contact_email": "{}".format(email),
-                   "automation": "{}".format(automation_number) }
+    def add_tag(self, email, tags):
+        data = {
+            'email': email,
+            'tags': tags,
+        }
+        return self.client._post('contact_tag_add', data)
 
-        request = ac_api_request(querystring, payload, contacts.base_url)
-        return json.loads(request.text)
-
-    def remove_contact_from_automation(email, automation_number):
-        querystring = {"api_key":  contacts.api_key,
-                       "api_action": "automation_contact_remove",
-                       "api_output": "json",
-                       }
-
-        payload = {"contact_email": "{}".format(email),
-                   "automation": "{}".format(automation_number) }
-
-        request = ac_api_request(querystring, payload, contacts.base_url)
-        return json.loads(request.text)
-
-    def add_contact_tag(contact_email, tag):
-        querystring = {"api_key":  contacts.api_key,
-                       "api_action": "contact_tag_add",
-                       "api_output": "json",
-                       }
-
-        payload = {"email": "{}".format(contact_email),
-                   "tags": "{}".format(tag)
-                   }
-        request = ac_api_request(querystring, payload, contacts.base_url)
-        return json.loads(request.text)
-
-    def remove_contact_tag(contact_email, tag):
-        querystring = {"api_key":  contacts.api_key,
-                       "api_action": "contact_tag_remove",
-                       "api_output": "json",
-                       }
-
-        payload = {"email": "{}".format(contact_email),
-                   "tags": "{}".format(tag)
-                   }
-        request = ac_api_request(querystring, payload, contacts.base_url)
-        return json.loads(request.text)
-
-    def get_all_campaign_details():
-        querystring = {"api_key":  contacts.api_key,
-                       "api_action": "campaign_list",
-                       "api_output": "json",}
-        request = ac_api_request(querystring, None, contacts.base_url)
-        return json.loads(request.text)
+    def remove_tag(self, email, tags):
+        data = {
+            'email': email,
+            'tags': tags,
+        }
+        return self.client._post('contact_tag_remove', data)
